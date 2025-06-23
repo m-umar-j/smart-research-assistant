@@ -23,3 +23,11 @@ class DocumentInfo(BaseModel):
 
 class DeleteFileRequest(BaseModel):
     file_id: int
+
+class ChallengeRequest(BaseModel):
+    file_id: int
+
+class EvaluateAnswer(BaseModel):
+    file_id: int
+    question: str
+    user_answer: str

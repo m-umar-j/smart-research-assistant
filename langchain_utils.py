@@ -1,8 +1,8 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.chains import create_history_aware_retriever, create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
+from langgraph.graph import START, StateGraph
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage, SystemMessage
 from typing import List
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
@@ -11,8 +11,11 @@ from pinecone_utilis import vectorstore
 from dotenv import load_dotenv
 load_dotenv()
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
-retriever = vectorstore.as_retriever(search_kwargs={"k": 2})
-
+retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
+llm = ChatOpenAI(
+    model='gpt-4.1',
+    api_key=OPENAI_API_KEY
+)
 output_parser = StrOutputParser()
 
 contextualize_q_system_prompt = (
@@ -38,6 +41,30 @@ qa_prompt = ChatPromptTemplate.from_messages([
 
 class State(TypedDict):
     messages: List[BaseMessage]
+    
+
+
+# Define application steps
+def retrieve(query: str):
+    retrieved_docs = vectorstore.similarity_search(query)
+    return  retrieved_docs
+
+
+def generate_response(query: str, state: State)->State:
+    retrieved_docs=retrieve(query=query)
+    docs_content = "\n\n".join(doc.page_content for doc in retrieved_docs)
+    system_message = SystemMessage(
+        content="You are a helpful AI assistant. Answer the user's question using ONLY the information provided below. "
+                "If the answer is not in the context, say 'I don't know.' Do not make up information. "
+                f"Context: {docs_content}"
+    )
+
+    state['messages'].append(system_message)
+    state['messages'].append(HumanMessage(content=query))
+
+    response = llm.invoke(state["messages"])
+    state['messages'].append(AIMessage(content=response.content))
+    return state
 
 
 

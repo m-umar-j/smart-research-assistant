@@ -1,7 +1,9 @@
 import sqlite3
 from datetime import datetime
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
-DB_NAME = "rag_app.db"
+
+DB_NAME = "research_assistant.db"
 
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
@@ -24,6 +26,7 @@ def create_document_store():
     conn.execute('''CREATE TABLE IF NOT EXISTS document_store
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                      filename TEXT,
+                     content TEXT,
                      upload_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.close()
 
@@ -40,16 +43,15 @@ def get_chat_history(session_id):
     cursor.execute('SELECT user_query, gpt_response FROM application_logs WHERE session_id = ? ORDER BY created_at', (session_id,))
     messages = []
     for row in cursor.fetchall():
-        messages.extend([
-            {"role": "human", "content": row['user_query']},
-            {"role": "ai", "content": row['gpt_response']}
-        ])
+        messages.append(HumanMessage(content=row['user_query']))
+        messages.append(AIMessage(content=row['gpt_response']))
+
     conn.close()
     return messages
-def insert_document_record(filename):
+def insert_document_record(filename, content):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO document_store (filename) VALUES (?)', (filename,))
+    cursor.execute('INSERT INTO document_store (filename, content) VALUES (?, ?)', (filename, content))
     file_id = cursor.lastrowid
     conn.commit()
     conn.close()
@@ -69,6 +71,20 @@ def get_all_documents():
     documents = cursor.fetchall()
     conn.close()
     return [dict(doc) for doc in documents]
+
+
+def get_file_content(file_id: int) -> str | None:
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute('SELECT content FROM document_store WHERE id = ?', (file_id,))
+        row = cursor.fetchone()
+        if row is not None:
+            return row[0]  
+        return None
+    finally:
+        conn.close()
+
 
 # Initialize the database tables
 create_application_logs()

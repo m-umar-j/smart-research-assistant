@@ -11,7 +11,6 @@ load_dotenv()
 
 # API keys
 PINECONE_API_KEY=os.getenv("PINECONE_API_KEY")
-print(f"Pinecone API Key: {PINECONE_API_KEY}")
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
 
 
@@ -72,13 +71,19 @@ def index_document_to_pinecone(file_path: str, file_id: int) -> bool:
     
 def delete_doc_from_pinecone(file_id: int):
     try:
-        docs = vectorstore.get(where={"file_id": file_id})
-        print(f"Found {len(docs['ids'])} document chunks for file_id {file_id}")
-
-        vectorstore._collection.delete(where={"file_id": file_id})
-        print(f"Deleted all documents with file_id {file_id}")
-
+        index = pc.Index(INDEX_NAME)
+        # Query for all vectors with file_id metadata
+        query_result = index.query(
+            vector=[0.0]*1024,  
+            filter={"file_id": {"$eq": str(file_id)}},
+            top_k=10000,  
+            include_metadata=True
+        )
+        ids = [match["id"] for match in query_result["matches"]]
+        if ids:
+            index.delete(ids=ids)
         return True
     except Exception as e:
-        print(f"Error deleting document with file_id {file_id} from Chroma: {str(e)}")
+        print(f"Error deleting from Pinecone: {str(e)}")
         return False
+
