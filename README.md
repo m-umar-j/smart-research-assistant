@@ -155,6 +155,7 @@ cd /app && streamlit run frontend/app.py --server.port=7860 --server.address=0.0
 
 ## Folder Structure
 
+```
 smart-research-assistant/
 ├── backend/ # FastAPI backend code
 ├── frontend/ # Streamlit frontend code
@@ -163,6 +164,7 @@ smart-research-assistant/
 ├── Dockerfile # Docker build file
 ├── start.sh # Startup script
 └── README.md # This file
+```
 
 
 ---
