@@ -77,7 +77,8 @@ ask_tab, challenge_tab = st.tabs(["Ask Anything", "Challenge Me"])
 
 with ask_tab:
     st.subheader("Document Chat")
-
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
     if st.session_state.current_file:
         # Display chat history
         for msg in st.session_state.chat_history:
