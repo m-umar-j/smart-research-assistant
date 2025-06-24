@@ -27,7 +27,7 @@ def chat(query_input: QueryInput):
     logging.info(f"Session ID: {session_id}, User Query: {query_input.question}, Model: {query_input.model.value}")
     chat_history = get_chat_history(session_id)
     print(chat_history)
-    state={"messages":[]} # test
+    state={"messages"chat_history} # test
     messages_state = generate_response(query=query_input.question, state=state)
     answer=messages_state["messages"][-1].content
 
