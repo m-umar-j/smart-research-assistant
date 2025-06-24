@@ -20,7 +20,7 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large", dimensions=1024, api_key=OPENAI_API_KEY)
 
 # Pinecone vector store
-pc = Pinecone(api_key="pcsk_55CAuv_4KzXk8TYtxsauVoxwBsqqTgxWYmNJEEYrCpVxPqHcYbeS8njTWjZ14xCMEbksPS")
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
 def load_and_split_document(file_path: str) -> List[Document]:
     if file_path.endswith('.pdf'):
