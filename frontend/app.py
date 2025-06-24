@@ -76,13 +76,24 @@ with st.sidebar:
 ask_tab, challenge_tab = st.tabs(["Ask Anything", "Challenge Me"])
 
 with ask_tab:
-    st.subheader("Document Q&A")
-    
+    st.subheader("Document Chat")
+
     if st.session_state.current_file:
-        # Chat interface
-        user_question = st.text_input("Ask a question about the document:")
-        
-        if user_question:
+        # Display chat history
+        for msg in st.session_state.chat_history:
+            if msg["role"] == "user":
+                st.markdown(f"**You:** {msg['content']}")
+            else:
+                st.markdown(f"**Assistant:** {msg['content']}")
+
+        # Chat input
+        user_question = st.text_input("Type your question and press Enter:", key="chat_input")
+        send = st.button("Send", key="send_chat")
+        if send and user_question.strip():
+            # Add user message to history
+            st.session_state.chat_history.append({"role": "user", "content": user_question})
+
+            # Send to backend
             response = requests.post(
                 f"{BACKEND_URL}/chat",
                 json={
@@ -91,13 +102,11 @@ with ask_tab:
                     "model": "gpt-4o-mini"
                 }
             )
-            
             if response.status_code == 200:
                 data = response.json()
-                st.divider()
-                st.subheader("Answer")
-                st.write(data["answer"])
-                st.caption(f"Session ID: {data['session_id']}")
+                # Add assistant response to history
+                st.session_state.chat_history.append({"role": "assistant", "content": data["answer"]})
+                st.experimental_rerun()
             else:
                 st.error("Failed to get response")
     else:
