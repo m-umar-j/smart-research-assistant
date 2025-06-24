@@ -157,13 +157,16 @@ cd /app && streamlit run frontend/app.py --server.port=7860 --server.address=0.0
 
 ```
 smart-research-assistant/
-├── backend/ # FastAPI backend code
-├── frontend/ # Streamlit frontend code
-├── .env # Environment variables
-├── requirements.txt # Python dependencies
-├── Dockerfile # Docker build file
-├── start.sh # Startup script
-└── README.md # This file
+├── backend/           # FastAPI backend code
+│   └── ...            
+├── frontend/          # Streamlit frontend code
+│   └── ...            
+├── .env               # Environment variables
+├── requirements.txt   # Python dependencies
+├── Dockerfile         # Docker build file
+├── start.sh           # Startup script
+└── README.md          # This file
+
 ```
 
 
