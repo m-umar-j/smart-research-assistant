@@ -2,6 +2,8 @@ FROM python:3.12
 
 WORKDIR /app
 
+RUN chmod -R 777 /app
+
 
 COPY backend /app/backend
 COPY frontend /app/frontend
