@@ -1,4 +1,4 @@
-from pinecone_utilis import create_pinecone_vectorstore,load_and_split_document, index_document_to_pinecone
+from backend.pinecone_utilis import create_pinecone_vectorstore,load_and_split_document, index_document_to_pinecone
 
 file_path="InternTaskGenAI.pdf"
 

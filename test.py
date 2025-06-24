@@ -7,8 +7,8 @@ BASE_URL = "http://localhost:8000"
 
 # with open("neural computing cwsi.pdf", "rb") as f:
 #     files = {"file": ("neural computing cwsi.pdf", f, "text/plain")}
-#     upload_response = requests.post(f"{BASE_URL}/chat", files=files)
-# print("Upload Response:", upload_response.json())
+#     upload_response = requests.post(f"{BASE_URL}/upload-doc", files=files)
+# # print("Upload Response:", upload_response.json())
 
 # file_id = upload_response.json().get("summary")
 

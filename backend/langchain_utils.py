@@ -7,7 +7,7 @@ from typing import List
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
 import os
-from pinecone_utilis import vectorstore
+from backend.pinecone_utilis import vectorstore
 from dotenv import load_dotenv
 load_dotenv()
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
