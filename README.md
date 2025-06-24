@@ -13,7 +13,9 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
 
 A document-aware AI assistant for research summarization, question-answering, and logic-based question generation, built with FastAPI (backend) and Streamlit (frontend), deployed as a single Docker container.
 
-Huggingfacen spaces link: https://huggingface.co/spaces/umar-100/smart-research-assistant 
+Huggingface spaces link: https://huggingface.co/spaces/umar-100/smart-research-assistant
+
+Loom demo link: https://www.loom.com/share/0a5302faa01e422394cda7a760c172f6?sid=b60a82e0-796b-416d-bc28-bad526a60fc5
 
 ---
 
