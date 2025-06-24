@@ -30,14 +30,11 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload Document (PDF/TXT)", type=["pdf", "txt"])
     if uploaded_file:
         if st.button("Upload Document"):
-            files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
-            data = {"session_id": st.session_state.session_id}
             response = requests.post(
                 f"{BACKEND_URL}/upload-doc",
-                files=files,
-                data=data,
+                files={"file": (uploaded_file.name, uploaded_file, "application/octet-stream")},
+                data={"session_id": st.session_state.session_id}
             )
-            print(response.status_code)
             if response.status_code == 200:
                 data = response.json()
                 st.session_state.current_file = data["file_id"]
