@@ -13,6 +13,8 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
 
 A document-aware AI assistant for research summarization, question-answering, and logic-based question generation, built with FastAPI (backend) and Streamlit (frontend), deployed as a single Docker container.
 
+Huggingfacen spaces link: https://huggingface.co/spaces/umar-100/smart-research-assistant 
+
 ---
 
 ## Features
