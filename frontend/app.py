@@ -37,6 +37,7 @@ with st.sidebar:
                 files=files,
                 data=data,
             )
+            print(response.status_code)
             if response.status_code == 200:
                 data = response.json()
                 st.session_state.current_file = data["file_id"]
