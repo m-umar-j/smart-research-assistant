@@ -1,7 +1,5 @@
 venv
-InternTaskGenAI.pdf
 .env
 research_assistant.db
-neural computing cwsi.pdf
 app.log
 __pycache__

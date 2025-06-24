@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from backend.pydantic_models import QueryInput, QueryResponse, DocumentInfo, DeleteFileRequest, ChallengeRequest, EvaluateAnswer
 from backend.langchain_utils import generate_response, retrieve
 from backend.db_utils import insert_application_logs, get_chat_history, get_all_documents, insert_document_record, delete_document_record, get_file_content
@@ -99,7 +99,9 @@ def evaluate_response(request: EvaluateAnswer):
 
 
 @app.post("/upload-doc")
-def upload_and_index_document(file: UploadFile = File(...)):
+def upload_and_index_document(file: UploadFile = File(...), session_id: str = Form(None)):
+    if not session_id:
+        session_id = str(uuid.uuid4())
     allowed_extensions = ['.pdf', '.txt']
     file_extension = os.path.splitext(file.filename)[1].lower()
 
@@ -114,7 +116,7 @@ def upload_and_index_document(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
         docs = load_and_split_document(temp_file_path)
         docs_content = "\n\n".join(doc.page_content for doc in docs)
-        file_id = insert_document_record(file.filename, docs_content)
+        file_id = insert_document_record(session_id, file.filename, docs_content)
         success = index_document_to_pinecone(temp_file_path, file_id)
 
         if success:
@@ -144,8 +146,8 @@ def upload_and_index_document(file: UploadFile = File(...)):
             os.remove(temp_file_path)
 
 @app.get("/list-docs", response_model=list[DocumentInfo])
-def list_documents():
-    return get_all_documents()
+def list_documents(session_id: str):
+    return get_all_documents(session_id)
 
 @app.post("/delete-doc")
 def delete_document(request: DeleteFileRequest):

@@ -32,7 +32,8 @@ with st.sidebar:
         if st.button("Upload Document"):
             response = requests.post(
                 f"{BACKEND_URL}/upload-doc",
-                files={"file": (uploaded_file.name, uploaded_file, "application/octet-stream")}
+                files={"file": (uploaded_file.name, uploaded_file, "application/octet-stream")},
+                data={"session_id": st.session_state.session_id}
             )
             if response.status_code == 200:
                 data = response.json()
@@ -46,7 +47,7 @@ with st.sidebar:
     # List documents
     st.subheader("Uploaded Documents")
     try:
-        documents = requests.get(f"{BACKEND_URL}/list-docs").json()
+        documents = requests.get(f"{BACKEND_URL}/list-docs", params={"session_id": st.session_state.session_id}).json()
         for doc in documents:
             doc_id = doc["id"]
             with st.container(border=True):

@@ -25,6 +25,7 @@ def create_document_store():
     conn = get_db_connection()
     conn.execute('''CREATE TABLE IF NOT EXISTS document_store
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                     session_id TEXT,
                      filename TEXT,
                      content TEXT,
                      upload_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
@@ -48,10 +49,11 @@ def get_chat_history(session_id):
 
     conn.close()
     return messages
-def insert_document_record(filename, content):
+def insert_document_record(session_id, filename, content):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO document_store (filename, content) VALUES (?, ?)', (filename, content))
+    cursor.execute('INSERT INTO document_store (session_id, filename, content) VALUES (?, ?, ?)', 
+                   (session_id, filename, content))
     file_id = cursor.lastrowid
     conn.commit()
     conn.close()
@@ -64,10 +66,10 @@ def delete_document_record(file_id):
     conn.close()
     return True
 
-def get_all_documents():
+def get_all_documents(session_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, filename, upload_timestamp FROM document_store ORDER BY upload_timestamp DESC')
+    cursor.execute('SELECT id, filename, upload_timestamp FROM document_store WHERE session_id = ? ORDER BY upload_timestamp DESC', (session_id,))
     documents = cursor.fetchall()
     conn.close()
     return [dict(doc) for doc in documents]
